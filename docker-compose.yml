@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  metrics-exporter:
+    image: akablockchain1/sygma-metrics-exporter-test:0.1
+    ports:
+      - "3000:3000"
+    volumes:
+      - data:/data
+    environment:
+      - INFURA_URL=${INFURA_URL}
+      - TOKEN_CONTRACT_ADDRESS=${TOKEN_CONTRACT_ADDRESS}
+
+volumes:
+  data:
