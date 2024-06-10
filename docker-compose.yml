@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   metrics-exporter:
-    image: akablockchain1/sygma-metrics-exporter-test:0.1
+    image: akablockchain1/sygma-metrics-exporter-test:0.2
     ports:
       - "3001:3000"
     volumes:
