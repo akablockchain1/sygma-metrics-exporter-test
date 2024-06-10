@@ -1,0 +1,29 @@
+groups:
+- name: SmartContractAlerts
+  rules:
+  - alert: HighTotalGasUsed
+    expr: total_gas_used > 10000000
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High Total Gas Used"
+      description: "Total gas used is {{ $value }} which is above the threshold of 10000000."
+
+  - alert: TransactionFailures
+    expr: transaction_failures > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Transaction Failures"
+      description: "There have been {{ $value }} transaction failures."
+
+  - alert: HighContractInteractions
+    expr: contract_interactions > 1000
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "High Contract Interactions"
+      description: "Number of contract interactions is {{ $value }} which is above the threshold of 1000."

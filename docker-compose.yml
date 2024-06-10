@@ -4,12 +4,41 @@ services:
   metrics-exporter:
     image: akablockchain1/sygma-metrics-exporter-test:0.2
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - data:/data
     environment:
       - INFURA_URL=${INFURA_URL}
       - TOKEN_CONTRACT_ADDRESS=${TOKEN_CONTRACT_ADDRESS}
+  
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3500:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert_rules.yml:/etc/prometheus/alert.rules.yml
+      - prometheus-data:/prometheus
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/config.yml
+    command:
+      - "--config.file=/etc/alertmanager/config.yml"
 
 volumes:
   data:
+  grafana-storage:
+  prometheus-data:
