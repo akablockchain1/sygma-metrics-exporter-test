@@ -58,6 +58,7 @@ const register = client.register;
 let totalGasUsedValue = BigInt(0);
 let transactionFailuresValue = 0;
 let contractInteractionsValue = 0;
+let firstIteration = true;
 
 const totalGasUsed = new client.Counter({
   name: 'total_gas_used',
@@ -93,7 +94,7 @@ const loadMetrics = () => {
     totalGasUsedValue = BigInt(metricsData.totalGasUsed);
     transactionFailuresValue = metricsData.transactionFailures;
     contractInteractionsValue = metricsData.contractInteractions;
-    const lastBlock = BigInt(metricsData.lastBlock); // Преобразование строки обратно в BigInt
+    const lastBlock = BigInt(metricsData.lastBlock);
     console.log('Metrics loaded:', metricsData);
     return lastBlock;
   }
@@ -107,12 +108,11 @@ app.get('/metrics', async (req, res) => {
 
 const getMetrics = async () => {
   try {
-    const lastBlock = loadMetrics();
+    let lastBlock = loadMetrics();
     const latestBlock = BigInt(await web3.eth.getBlockNumber());
-
-    if (lastBlock >= latestBlock) {
-      console.log('No new blocks to process');
-      return;
+    if (firstIteration) {
+      lastBlock = latestBlock -1n;
+      firstIteration = false;
     }
 
     const events = await tokenContract.getPastEvents('allEvents', {
@@ -150,7 +150,7 @@ const getMetrics = async () => {
   }
 };
 
-setInterval(getMetrics, 10000);
+setInterval(getMetrics, 15000);
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
